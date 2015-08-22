@@ -45,6 +45,8 @@ def main():
             done = True
             ctrlr._done = True
 
+    print 'Theoria Exiting.'
+
     return 0
 
 if __name__ == "__main__":
