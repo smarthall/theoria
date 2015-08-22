@@ -5,6 +5,7 @@ A CherryPy driver for Theoria.
 import cherrypy
 import threading
 from PIL import Image
+from cStringIO import StringIO
 
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket
@@ -37,7 +38,11 @@ class WebDriver:
         return self._buffer
 
     def send_buffer(self):
-        pass
+        out = StringIO()
+        self._buffer.save(out, 'PNG')
+        imgdata = out.getvalue()
+        out.close()
+        cherrypy.engine.publish('websocket-broadcast', imgdata, True)
 
 
 class TheoriaWeb:
@@ -57,12 +62,15 @@ class TheoriaWeb:
             }
             socket.onmessage = function(e){
                var server_message = e.data;
-               console.log(server_message);
+               console.log(window.btoa(server_message));
+               var img = document.getElementById('image');
+               img.src = "data:image/png;base64," + window.btoa(server_message);
             }
         </script>
         </head>
         <body>
         <h1>Theoria Web</h1>
+        <img id="image" width="1024" height="600" />
         </body>
         </html>
         """
@@ -72,6 +80,5 @@ class TheoriaWeb:
         pass
 
 class TheoriaWebSocket(WebSocket):
-    def received_message(self, message):
-        self.send(message.data, message.is_binary)
+    pass
 
