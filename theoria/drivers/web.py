@@ -61,10 +61,8 @@ class TheoriaWeb:
                console.log('WebSocket Closed');
             }
             socket.onmessage = function(e){
-               var server_message = e.data;
-               console.log(window.btoa(server_message));
                var img = document.getElementById('image');
-               img.src = "data:image/png;base64," + server_message;
+               img.src = "data:image/png;base64," + e.data;
             }
         </script>
         </head>
