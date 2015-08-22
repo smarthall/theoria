@@ -35,6 +35,8 @@ def main():
 
     ctrlr.start()
 
+    print 'Theoria started. Type CTRL-C to Exit.'
+
     done = False
     while not done:
         try:
