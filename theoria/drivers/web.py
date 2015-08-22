@@ -54,12 +54,6 @@ class TheoriaWeb:
         <title>Theoria Web</title>
         <script type="text/javascript">
             var socket = new WebSocket('ws://localhost:9000/ws');
-            socket.onopen = function(){
-                console.log('WebSocket Open!');
-            }
-            socket.onclose = function(){
-               console.log('WebSocket Closed');
-            }
             socket.onmessage = function(e){
                var img = document.getElementById('image');
                img.src = "data:image/png;base64," + e.data;
