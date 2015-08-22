@@ -26,11 +26,17 @@ def main():
 
     args = parser.parse_args()
 
+    # Get the driver
     driver_module = import_module(args.driver)
     driver = driver_module.create()
 
+    # Get the layout
+    layout_module = import_module(args.layout)
+    layout = layout_module.create()
+
     ctrlr = controller.Controller(
-            driver=driver
+            driver=driver,
+            layout=layout,
     )
 
     ctrlr.start()

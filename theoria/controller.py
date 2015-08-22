@@ -8,10 +8,12 @@ from Queue import Queue, Empty
 from util import RepeatTimer
 
 class Controller(threading.Thread):
-    def __init__(self, driver):
+    def __init__(self, driver, layout):
+        self._driver = driver
+        self._layout = layout
+
         threading.Thread.__init__(self)
         self.name = 'Theoria-Controller'
-        self._driver = driver
         self._update_queue = Queue()
         self._done = False
         self._timer = RepeatTimer(5, self._driver.send_buffer)
