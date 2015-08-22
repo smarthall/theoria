@@ -6,7 +6,7 @@ import cherrypy
 import threading
 from PIL import Image
 from cStringIO import StringIO
-
+from base64 import b64encode
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket
 
@@ -31,7 +31,7 @@ class WebDriver:
         self._web_thread.name = 'Theoria-WebDriver'
         self._web_thread.daemon = True
         self._web_thread.start()
-        self._buffer = Image.new('RGBA', (1024, 600))
+        self._buffer = Image.new('RGB', (1024, 600))
         self.send_buffer()
 
     def get_buffer(self):
@@ -40,9 +40,9 @@ class WebDriver:
     def send_buffer(self):
         out = StringIO()
         self._buffer.save(out, 'PNG')
-        imgdata = out.getvalue()
+        imgdata = b64encode(out.getvalue())
         out.close()
-        cherrypy.engine.publish('websocket-broadcast', imgdata, True)
+        cherrypy.engine.publish('websocket-broadcast', imgdata)
 
 
 class TheoriaWeb:
@@ -64,7 +64,7 @@ class TheoriaWeb:
                var server_message = e.data;
                console.log(window.btoa(server_message));
                var img = document.getElementById('image');
-               img.src = "data:image/png;base64," + window.btoa(server_message);
+               img.src = "data:image/png;base64," + server_message;
             }
         </script>
         </head>
