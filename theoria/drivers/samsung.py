@@ -6,7 +6,8 @@ from PIL import Image
 from cStringIO import StringIO
 import time
 import struct
-import usb
+import usb.core
+from usb.util import *
 
 SAMSUNG_VID = 0x04e8
 MASS_STORAGE_PID = 0x2035
@@ -19,7 +20,8 @@ class SamsungDriver:
     def __init__(self):
         # Look for the frame in storage mode
         dev = usb.core.find(idVendor=SAMSUNG_VID, idProduct=MASS_STORAGE_PID)
-        dev.ctrl_transfer(CTRL_TYPE_STANDARD | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x06, 0xfe, 0xfe, 254)
+	if dev is not None:
+        	dev.ctrl_transfer(CTRL_TYPE_STANDARD | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x06, 0xfe, 0xfe, 254)
 
         # Give the display 3 seconds to come back
         time.sleep(3)
