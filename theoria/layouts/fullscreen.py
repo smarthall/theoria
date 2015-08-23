@@ -16,6 +16,7 @@ class FullscreenLayout:
                 callable=self._rotate_screen,
         )
         self._rotate_timer.daemon = True
+        self._rotate_timer.name = 'Theoria-FullscreenLayout-Rotater'
         self._rotate_timer.start()
 
     def register_app(self, app):
@@ -43,4 +44,4 @@ class FullscreenLayout:
         if oldapp is not None:
             oldapp.set_layout(None, None)
         if newapp is not None:
-            newapp.set_layout(imgbuffer, trigger)
+            newapp.set_layout(self._buffer, self._trigger)

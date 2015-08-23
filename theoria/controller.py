@@ -6,6 +6,8 @@ import threading
 import time
 from Queue import Queue, Empty
 
+from apps.color import ColorApp
+
 class Controller(threading.Thread):
     def __init__(self, driver, layout_module):
         self._driver = driver
@@ -15,11 +17,17 @@ class Controller(threading.Thread):
         self._layout = layout_module.create(imgbuffer, trigger)
 
         self._applist = [
+                ColorApp('#ff0000'),
+                ColorApp('#00ff00'),
+                ColorApp('#0000ff'),
         ]
 
         threading.Thread.__init__(self)
         self.name = 'Theoria-Controller'
         self._running = True
+
+        for app in self._applist:
+            self._layout.register_app(app)
 
     def run(self):
         while self._running:
