@@ -13,6 +13,7 @@ setup(
         'cherrypy',
         'pillow',
         'ws4py',
+        'pyusb',
     ],
 
     # Tests
