@@ -44,7 +44,7 @@ class WebDriver:
         cherrypy.tools.websocket = WebSocketTool()
         cherrypy.quickstart(TheoriaWeb(self), '/', config={'/ws': {
             'tools.websocket.on': True,
-            'tools.websocket.handler_cls': TheoriaWebSocket
+            'tools.websocket.handler_cls': WebSocket
         }})
 
 class TheoriaWeb(object):
@@ -75,7 +75,4 @@ class TheoriaWeb(object):
     @cherrypy.expose
     def ws(self):
         pass
-
-class TheoriaWebSocket(WebSocket):
-    pass
 
