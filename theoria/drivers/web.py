@@ -63,6 +63,10 @@ class TheoriaWeb(object):
                var img = document.getElementById('image');
                img.src = "data:image/png;base64," + e.data;
             }
+            socket.onclose = function (evt) {
+               var img = document.getElementById('image');
+               img.src = "";
+            }
         </script>
         </head>
         <body>
