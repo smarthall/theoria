@@ -32,7 +32,7 @@ class SamsungDriver:
         # Look for the frame in display mode
         dev = usb.core.find(idVendor=SAMSUNG_VID, idProduct=MINI_DISPLAY_PID)
         dev.set_configuration()
-        result = dev.ctrl_transfer(CTRL_TYPE_VENDOR | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x04, 0x00, 0x00, 1)
+        dev.ctrl_transfer(CTRL_TYPE_VENDOR | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x04, 0x00, 0x00, 1)
 
         self._dev = dev
         self._buffer = Image.new('RGB', (1024, 600))
