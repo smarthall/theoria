@@ -20,8 +20,11 @@ class SamsungDriver:
     def __init__(self):
         # Look for the frame in storage mode
         dev = usb.core.find(idVendor=SAMSUNG_VID, idProduct=MASS_STORAGE_PID)
-	if dev is not None:
-        	dev.ctrl_transfer(CTRL_TYPE_STANDARD | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x06, 0xfe, 0xfe, 254)
+        if dev is not None:
+            try:
+                dev.ctrl_transfer(CTRL_TYPE_STANDARD | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x06, 0xfe, 0xfe, 254)
+            except usb.core.USBError as e:
+                pass # Ignore the error from the device disappearing
 
         # Give the display 3 seconds to come back
         time.sleep(3)
