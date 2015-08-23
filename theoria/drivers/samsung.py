@@ -30,7 +30,7 @@ class SamsungDriver:
         time.sleep(5)
 
         # Look for the frame in display mode
-        ev = usb.core.find(idVendor=SAMSUNG_VID, idProduct=MINI_DISPLAY_PID)
+        dev = usb.core.find(idVendor=SAMSUNG_VID, idProduct=MINI_DISPLAY_PID)
         dev.set_configuration()
         result = dev.ctrl_transfer(CTRL_TYPE_VENDOR | CTRL_IN | CTRL_RECIPIENT_DEVICE, 0x04, 0x00, 0x00, 1)
 
