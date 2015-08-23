@@ -18,7 +18,6 @@ class Controller(threading.Thread):
         self._layout = layout_module.create(imgbuffer, trigger)
 
         self._applist = [
-                ColorApp('#ff0000'),
                 ClockApp(),
         ]
 
