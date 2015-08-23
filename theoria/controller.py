@@ -7,6 +7,7 @@ import time
 from Queue import Queue, Empty
 
 from apps.color import ColorApp
+from apps.clock import ClockApp
 
 class Controller(threading.Thread):
     def __init__(self, driver, layout_module):
@@ -18,8 +19,7 @@ class Controller(threading.Thread):
 
         self._applist = [
                 ColorApp('#ff0000'),
-                ColorApp('#00ff00'),
-                ColorApp('#0000ff'),
+                ClockApp(),
         ]
 
         threading.Thread.__init__(self)
