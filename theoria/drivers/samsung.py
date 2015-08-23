@@ -27,7 +27,7 @@ class SamsungDriver:
                 pass # Ignore the error from the device disappearing
 
         # Give the display 3 seconds to come back
-        time.sleep(3)
+        time.sleep(5)
 
         # Look for the frame in display mode
         ev = usb.core.find(idVendor=SAMSUNG_VID, idProduct=MINI_DISPLAY_PID)
