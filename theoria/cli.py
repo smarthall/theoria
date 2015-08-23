@@ -32,11 +32,10 @@ def main():
 
     # Get the layout
     layout_module = import_module(args.layout)
-    layout = layout_module.create()
 
     ctrlr = controller.Controller(
             driver=driver,
-            layout=layout,
+            layout_module=layout_module,
     )
 
     ctrlr.start()
@@ -49,7 +48,7 @@ def main():
             ctrlr.join(1)
         except KeyboardInterrupt:
             done = True
-            ctrlr._done = True
+            ctrlr.quit()
 
     print 'Theoria Exiting.'
 
