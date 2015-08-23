@@ -21,6 +21,8 @@ class FullscreenLayout:
 
     def register_app(self, app):
         self._applist.append(app)
+        if len(self._applist) == 1:
+            app.set_layout(self._buffer, self._trigger)
 
     def deregister_app(self, app):
         self._applist.remove(app)
