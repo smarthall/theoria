@@ -13,21 +13,9 @@ from ws4py.websocket import WebSocket
 def create(*args, **kwargs):
     return WebDriver(*args, **kwargs)
 
-def start_web():
-    cherrypy.config.update({
-        'server.socket_port': 9000,
-        'engine.autoreload.on': False,
-    })
-    WebSocketPlugin(cherrypy.engine).subscribe()
-    cherrypy.tools.websocket = WebSocketTool()
-    cherrypy.quickstart(TheoriaWeb(), '/', config={'/ws': {
-        'tools.websocket.on': True,
-        'tools.websocket.handler_cls': TheoriaWebSocket
-    }})
-
 class WebDriver:
     def __init__(self):
-        self._web_thread = threading.Thread(target=start_web)
+        self._web_thread = threading.Thread(target=self.start_web)
         self._web_thread.name = 'Theoria-WebDriver'
         self._web_thread.daemon = True
         self._web_thread.start()
@@ -37,15 +25,32 @@ class WebDriver:
     def get_buffer(self):
         return self._buffer
 
-    def send_buffer(self):
+    def get_img_data(self):
         out = StringIO()
         self._buffer.save(out, 'PNG')
         imgdata = b64encode(out.getvalue())
         out.close()
-        cherrypy.engine.publish('websocket-broadcast', imgdata)
+        return imgdata
 
+    def send_buffer(self):
+        cherrypy.engine.publish('websocket-broadcast', self.get_img_data())
 
-class TheoriaWeb:
+    def start_web(self):
+        cherrypy.config.update({
+            'server.socket_port': 9000,
+            'engine.autoreload.on': False,
+        })
+        WebSocketPlugin(cherrypy.engine).subscribe()
+        cherrypy.tools.websocket = WebSocketTool()
+        cherrypy.quickstart(TheoriaWeb(self), '/', config={'/ws': {
+            'tools.websocket.on': True,
+            'tools.websocket.handler_cls': TheoriaWebSocket
+        }})
+
+class TheoriaWeb(object):
+    def __init__(self, driver):
+        self._driver = driver
+
     @cherrypy.expose
     def index(self):
         return """
@@ -62,10 +67,10 @@ class TheoriaWeb:
         </head>
         <body>
         <h1>Theoria Web</h1>
-        <img id="image" width="1024" height="600" />
+        <img id="image" width="1024" height="600" src="data:image/png;base64,%s" />
         </body>
         </html>
-        """
+        """ % self._driver.get_img_data()
 
     @cherrypy.expose
     def ws(self):
