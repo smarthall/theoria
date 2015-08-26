@@ -10,12 +10,9 @@ from apps.color import ColorApp
 from apps.clock import ClockApp
 
 class Controller(threading.Thread):
-    def __init__(self, driver, layout_module):
+    def __init__(self, driver, layout):
         self._driver = driver
-
-        imgbuffer = driver.get_buffer()
-        trigger = self.process_update
-        self._layout = layout_module.create(imgbuffer, trigger)
+        self._layout = layout
 
         self._applist = [
                 ClockApp(),
@@ -34,7 +31,4 @@ class Controller(threading.Thread):
 
     def quit(self):
         self._running = False
-
-    def process_update(self):
-        self._driver.send_buffer()
 

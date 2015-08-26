@@ -14,12 +14,15 @@ def create(*args, **kwargs):
     return WebDriver(*args, **kwargs)
 
 class WebDriver:
-    def __init__(self):
+    def __init__(self, width=1024, height=600):
+        self._width = int(width)
+        self._height = int(height)
+
         self._web_thread = threading.Thread(target=self.start_web)
         self._web_thread.name = 'Theoria-WebDriver'
         self._web_thread.daemon = True
         self._web_thread.start()
-        self._buffer = Image.new('RGB', (1024, 600))
+        self._buffer = Image.new('RGB', (self._width, self._height))
         self.send_buffer()
 
     def get_buffer(self):
@@ -71,10 +74,10 @@ class TheoriaWeb(object):
         </head>
         <body>
         <h1>Theoria Web</h1>
-        <img id="image" width="1024" height="600" src="data:image/png;base64,%s" />
+        <img id="image" width="%d" height="%d" src="data:image/png;base64,%s" />
         </body>
         </html>
-        """ % self._driver.get_img_data()
+        """ % (self._driver._width, self._driver._height, self._driver.get_img_data())
 
     @cherrypy.expose
     def ws(self):

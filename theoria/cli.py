@@ -3,6 +3,7 @@ Tools for running the app from the CLI
 """
 
 import argparse
+from ConfigParser import SafeConfigParser
 import sys
 import signal
 from importlib import import_module
@@ -15,27 +16,35 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Start the metric monitor.')
 
-    parser.add_argument("-d", "--driver", type=str,
-            default="theoria.drivers.web",
-            help="The driver for displaying the dash")
-
-    parser.add_argument("-l", "--layout", type=str,
-            default="theoria.layouts.fullscreen",
-            help="The layout to use for displaying things")
-
+    parser.add_argument("-c", "--config", type=str,
+            default="conf/test.cfg",
+            help="The configuration file to use")
 
     args = parser.parse_args()
 
+    config = SafeConfigParser()
+    config.read(['conf/default.cfg', args.config])
+    theoria_conf = dict(config.items('theoria'))
+
     # Get the driver
-    driver_module = import_module(args.driver)
-    driver = driver_module.create()
+    if 'theoria:driver' in config.sections():
+        driver_conf = dict(config.items('theoria:driver'))
+    else:
+        driver_conf = {}
+    driver_module = import_module(theoria_conf['driver'])
+    driver = driver_module.create(**driver_conf)
 
     # Get the layout
-    layout_module = import_module(args.layout)
+    if 'theoria:layout' in config.sections():
+        layout_conf = dict(config.items('theoria:layout'))
+    else:
+        layout_conf = {}
+    layout_module = import_module(theoria_conf['layout'])
+    layout = layout_module.create(driver=driver, **layout_conf)
 
     ctrlr = controller.Controller(
             driver=driver,
-            layout_module=layout_module,
+            layout=layout,
     )
 
     ctrlr.start()

@@ -4,9 +4,10 @@ def create(*args, **kwargs):
     return FullscreenLayout(*args, **kwargs)
 
 class FullscreenLayout:
-    def __init__(self, imgbuffer, trigger):
-        self._trigger = trigger
-        self._buffer = imgbuffer
+    def __init__(self, driver):
+        self._driver = driver
+        self._trigger = driver.send_buffer
+        self._buffer = driver.get_buffer()
 
         self._applist = []
         self._cur_app = 0
