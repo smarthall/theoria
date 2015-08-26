@@ -10,9 +10,6 @@ from base64 import b64encode
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket
 
-def create(*args, **kwargs):
-    return WebDriver(*args, **kwargs)
-
 class WebDriver:
     def __init__(self, width=1024, height=600):
         self._width = int(width)

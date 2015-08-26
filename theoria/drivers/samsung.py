@@ -13,9 +13,6 @@ SAMSUNG_VID = 0x04e8
 MASS_STORAGE_PID = 0x2035
 MINI_DISPLAY_PID = 0x2036
 
-def create(*args, **kwargs):
-    return SamsungDriver(*args, **kwargs)
-
 class SamsungDriver:
     def __init__(self):
         # Look for the frame in storage mode

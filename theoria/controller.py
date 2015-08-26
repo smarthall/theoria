@@ -10,19 +10,17 @@ from apps.color import ColorApp
 from apps.clock import ClockApp
 
 class Controller(threading.Thread):
-    def __init__(self, driver, layout):
+    def __init__(self, driver, layout, cache, app_list):
         self._driver = driver
         self._layout = layout
-
-        self._applist = [
-                ClockApp(),
-        ]
+        self._cache = cache
+        self._app_list = app_list
 
         threading.Thread.__init__(self)
         self.name = 'Theoria-Controller'
         self._running = True
 
-        for app in self._applist:
+        for app in self._app_list:
             self._layout.register_app(app)
 
     def run(self):

@@ -1,8 +1,5 @@
 from theoria.util import RepeatTimer
 
-def create(*args, **kwargs):
-    return FullscreenLayout(*args, **kwargs)
-
 class FullscreenLayout:
     def __init__(self, driver):
         self._driver = driver
