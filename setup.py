@@ -13,7 +13,7 @@ setup(
         'cherrypy',
         'pillow',
         'ws4py',
-        'pyusb',
+        'pyusb==1.0.0b2',
     ],
 
     # Tests
