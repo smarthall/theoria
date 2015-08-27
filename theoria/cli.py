@@ -79,6 +79,7 @@ def main():
         app_conf = config.get_app_config_section(app)
         app_class = import_class(app_conf['app'])
         del app_conf['app']
+        app_conf['cache'] = cache
         app_instance = app_class(**app_conf)
         app_list.append(app_instance)
 

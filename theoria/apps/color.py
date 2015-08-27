@@ -1,7 +1,7 @@
 from PIL import ImageDraw, ImageColor
 
 class ColorApp(object):
-    def __init__(self, color):
+    def __init__(self, color, *args, **kwargs):
         self._color = ImageColor.getrgb(color)
 
         self._buffer = None

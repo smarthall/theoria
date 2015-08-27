@@ -10,7 +10,7 @@ TIMESIZE_BIG = 96
 DATESIZE_BIG = 36
 
 class ClockApp(object):
-    def __init__(self, bgcolor='#000000', fgcolor='#ffffff', font=DEFAULT_FONT):
+    def __init__(self, bgcolor='#000000', fgcolor='#ffffff', font=DEFAULT_FONT, *args, **kwargs):
         self._bgcolor = ImageColor.getrgb(bgcolor)
         self._fgcolor = ImageColor.getrgb(fgcolor)
         self._timefontbig = ImageFont.truetype(font, size=TIMESIZE_BIG)
@@ -55,4 +55,5 @@ class ClockApp(object):
             draw.ctext((textx, timey), timestr, font=self._timefontbig, fill=self._fgcolor, center=graphics.CENTER_BOTH)
             draw.ctext((textx, datey), datestr, font=self._datefontbig, fill=self._fgcolor, center=graphics.CENTER_BOTH)
             self._trigger()
+
 
