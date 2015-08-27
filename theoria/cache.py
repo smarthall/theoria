@@ -1,6 +1,7 @@
 from collections import namedtuple
 from time import time
 import cPickle as pickle
+from copy import deepcopy
 
 DEFAULT_TTL = 3600
 
@@ -17,19 +18,19 @@ class MemoryCache(object):
     def __getitem__(self, key):
         item = self._storage[key]
         if item.expires > time():
-            return item.value
+            return deepcopy(item.value)
         else:
             raise KeyError("'%s' is expired" % key)
 
     def get(self, key, default=None):
         try:
-            return self[key]
+            return deepcopy(self[key])
         except KeyError:
             return default
 
     def store_item(self, key, value, ttl=DEFAULT_TTL):
         item = CacheItem(value, time() + ttl)
-        self._storage[key] = item
+        self._storage[key] = deepcopy(item)
 
     def gc(self):
         for key, item in self._storage.items():
