@@ -13,6 +13,7 @@ setup(
         'cherrypy',
         'pillow',
         'ws4py',
+        'requests',
         'pyusb==1.0.0b2',
     ],
 
