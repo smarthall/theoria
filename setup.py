@@ -14,6 +14,7 @@ setup(
         'pillow',
         'ws4py',
         'requests',
+        'pytz',
         'pyusb==1.0.0b2',
     ],
 

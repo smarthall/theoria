@@ -11,28 +11,25 @@ from importlib import import_module
 import controller
 
 class TheoriaConfig(SafeConfigParser):
-    def get_global_section(self):
-        return dict(self.items('theoria'))
+    def get_global_section(self, name=None):
+        if name is None:
+            return dict(self.items('theoria'))
+        else:
+            return self.get_section('theoria', name)
 
-    def get_theoria_config_section(self, section):
-        section = 'theoria:' + section
+    def get_section(self, section_type, name):
+        section = section_type + ':' + name
 
         if section in self.sections():
             return dict(self.items(section))
         else:
             return {}
 
-    def get_app_list(self):
-        sections = filter(lambda x:x.startswith('app:'), self.sections())
+    def list_sections(self, section_type):
+        section_prefix = section_type + ':'
+
+        sections = filter(lambda x:x.startswith(section_prefix), self.sections())
         return map(lambda x:x.split(':', 1)[1], sections)
-
-    def get_app_config_section(self, app_name):
-        app_name = 'app:' + app_name
-
-        if app_name in self.sections():
-            return dict(self.items(app_name))
-        else:
-            return {}
 
 
 def import_class(full_path):
@@ -55,39 +52,47 @@ def main():
     args = parser.parse_args()
 
     config = TheoriaConfig()
-    config.read(['conf/default.cfg', args.config])
+    config.read(['conf/new.cfg', args.config])
     theoria_conf = config.get_global_section()
 
     # Get the driver
-    driver_conf = config.get_theoria_config_section('driver')
+    driver_conf = config.get_global_section('driver')
     driver_class = import_class(theoria_conf['driver'])
     driver = driver_class(**driver_conf)
 
-    # Get the layout
-    layout_conf = config.get_theoria_config_section('layout')
-    layout_class = import_class(theoria_conf['layout'])
-    layout = layout_class(driver=driver, **layout_conf)
-
     # Make a cache
-    cache_conf = config.get_theoria_config_section('cache')
+    cache_conf = config.get_global_section('cache')
     cache_class = import_class(theoria_conf['cache'])
     cache = cache_class(**cache_conf)
 
-    # Make all the apps
-    app_list = []
-    for app in config.get_app_list():
-        app_conf = config.get_app_config_section(app)
-        app_class = import_class(app_conf['app'])
-        del app_conf['app']
-        app_conf['cache'] = cache
-        app_instance = app_class(**app_conf)
-        app_list.append(app_instance)
+    # Start up all the providers
+    providers = {}
+    for provider_name in config.list_sections('provider'):
+        # Find the provider
+        provider_conf = config.get_section('provider', provider_name)
+
+        try:
+            provider_class = import_class(provider_conf['provider'])
+        except ImportError as e:
+            print 'Error! Could not find provider: ' + provider_conf['provider']
+            sys.exit(1)
+
+        # Prepare the provider config
+        del provider_conf['provider']
+        provider_conf['cache'] = cache
+        provider_instance = provider_class(**provider_conf)
+
+        # Store it for later
+        providers[provider_name] = provider_instance
+
+    # Build the screen starting from the base
+    base_screen = None
 
     ctrlr = controller.Controller(
             driver=driver,
-            layout=layout,
+            base_screen=base_screen,
             cache=cache,
-            app_list=app_list,
+            providers=providers,
     )
 
     ctrlr.start()
