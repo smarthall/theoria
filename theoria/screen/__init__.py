@@ -1,0 +1,4 @@
+
+class ScreenBase(object):
+    pass
+

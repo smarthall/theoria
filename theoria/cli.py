@@ -6,7 +6,6 @@ import argparse
 from ConfigParser import SafeConfigParser
 import sys
 import signal
-from importlib import import_module
 
 import controller
 
@@ -32,13 +31,6 @@ class TheoriaConfig(SafeConfigParser):
         return map(lambda x:x.split(':', 1)[1], sections)
 
 
-def import_class(full_path):
-    module_name, class_name = full_path.rsplit('.', 1)
-
-    module = import_module(module_name)
-
-    return getattr(module, class_name)
-
 def main():
     """
     Launch app from command line
@@ -51,50 +43,10 @@ def main():
 
     args = parser.parse_args()
 
+    # Start up the controller
     config = TheoriaConfig()
     config.read(['conf/new.cfg', args.config])
-    theoria_conf = config.get_global_section()
-
-    # Get the driver
-    driver_conf = config.get_global_section('driver')
-    driver_class = import_class(theoria_conf['driver'])
-    driver = driver_class(**driver_conf)
-
-    # Make a cache
-    cache_conf = config.get_global_section('cache')
-    cache_class = import_class(theoria_conf['cache'])
-    cache = cache_class(**cache_conf)
-
-    # Start up all the providers
-    providers = {}
-    for provider_name in config.list_sections('provider'):
-        # Find the provider
-        provider_conf = config.get_section('provider', provider_name)
-
-        try:
-            provider_class = import_class(provider_conf['provider'])
-        except ImportError as e:
-            print 'Error! Could not find provider: ' + provider_conf['provider']
-            sys.exit(1)
-
-        # Prepare the provider config
-        del provider_conf['provider']
-        provider_conf['cache'] = cache
-        provider_instance = provider_class(**provider_conf)
-
-        # Store it for later
-        providers[provider_name] = provider_instance
-
-    # Build the screen starting from the base
-    base_screen = None
-
-    ctrlr = controller.Controller(
-            driver=driver,
-            base_screen=base_screen,
-            cache=cache,
-            providers=providers,
-    )
-
+    ctrlr = controller.Controller(config)
     ctrlr.start()
 
     print 'Theoria started. Type CTRL-C to Exit.'
