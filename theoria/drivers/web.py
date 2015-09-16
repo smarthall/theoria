@@ -19,7 +19,7 @@ class WebDriver:
         self._web_thread.name = 'Theoria-WebDriver'
         self._web_thread.daemon = True
         self._web_thread.start()
-        self._buffer = Image.new('RGB', (self._width, self._height))
+        self._buffer = Image.new('RGBA', (self._width, self._height))
         self.send_buffer()
 
     def get_buffer(self):

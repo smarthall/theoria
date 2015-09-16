@@ -38,10 +38,14 @@ class Controller(threading.Thread):
         self._cache = cache_class(**cache_conf)
 
         ## Provider
-        providers = [self.setup_provider(config.get_section('provider', provider)) for provider in config.list_sections('provider')]
+        providers = {}
+        for provider_name in config.list_sections('provider'):
+            providers[provider_name] = self.setup_provider(config.get_section('provider', provider_name))
 
         # Screen
-        screens = [self.setup_screen(config.get_section('screen', screen), providers) for screen in config.list_sections('screen')]
+        screens = {}
+        for screen_name in config.list_sections('screen'):
+            screens[screen_name] = self.setup_screen(config.get_section('screen', screen_name), providers)
 
         # Check for a base screen
         if 'base' not in screens.keys():
