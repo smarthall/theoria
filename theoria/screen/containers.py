@@ -1,7 +1,6 @@
-import time
-
 from base import BaseScreen
 from PIL import Image
+from theoria.util import RepeatTimer
 
 DEFAULT_ROTATION_TIMER = 10
 
@@ -15,14 +14,29 @@ class ContainerScreen(BaseScreen):
     def link(self, buf, screens):
         super(ContainerScreen, self).link(buf, screens)
 
-        self._children = [screens[name] for name in self._str_children]
+        self._children = []
+        for name in self._str_children:
+            screen = screens[name]
+            num = len(self._children)
+            self._children.append(screen)
+            screen.subscribe(
+                    callback=self.child_changed,
+            )
 
+    def child_changed(self):
+        self.draw()
+        self.changed()
 
 class RotateScreen(ContainerScreen):
     def __init__(self, refresh=DEFAULT_ROTATION_TIMER, *args, **kwargs):
         super(RotateScreen, self).__init__(*args, **kwargs)
 
-        self._refresh = refresh
+        self._current = 0
+
+        self._next_timer = RepeatTimer(
+                interval = refresh,
+                callable=self.next,
+        )
 
     def link(self, buf, screens):
         super(RotateScreen, self).link(buf, screens)
@@ -36,9 +50,16 @@ class RotateScreen(ContainerScreen):
             self._buffers.append(scr_buf)
             scr.link(scr_buf, screens)
 
-    def draw(self):
-        current = int(time.time() / self._refresh) % len(self._buffers)
-        cbuf = self._buffers[current]
+        self._next_timer.start()
+        self.draw()
 
-        self._buf.paste(cbuf, cbuf)
+    def next(self):
+        self._current = (self._current + 1) % len(self._buffers)
+        self.draw()
+        self.changed()
+
+    def draw(self):
+        cbuf = self._buffers[self._current]
+
+        self._buf.paste(cbuf, (0, 0), cbuf)
 

@@ -1,25 +1,36 @@
 from theoria.exceptions import NotImplemented
 from PIL import ImageColor, ImageDraw
 
+DEFAULT_COLOR_SCREEN = '#000000'
+
 class BaseScreen(object):
-    def __init__(self, *args, **kwargs):
-        all_providers = kwargs.pop('providers', [])
-        str_provider = kwargs.pop('provider', None)
+    def __init__(self, providers, provider=None):
+        self._provider = providers.get(provider, None)
 
-        self._provider = all_providers.get(str_provider, None)
+        self._subscribers = []
 
-        super(BaseScreen, self).__init__(*args, **kwargs)
+    def subscribe(self, callback, *args, **kwargs):
+        self._subscribers.append((callback, args, kwargs))
+
+    def changed(self):
+        for callback, args, kwargs in self._subscribers:
+            callback(*args, **kwargs)
 
     def link(self, buf, screens):
         self._buf = buf
+        if self._provider is not None:
+            self._provider.subscribe(
+                    callback=self.draw
+            )
 
     def draw(self):
         raise NotImplemented()
 
 
 class Color(BaseScreen):
-    def __init__(self, *args, **kwargs):
-        self._color = ImageColor.getrgb(kwargs.pop('color', '#000000'))
+    def __init__(self, color=DEFAULT_COLOR_SCREEN, *args, **kwargs):
+        super(Color, self).__init__(*args, **kwargs)
+        self._color = color
 
     def link(self, buf, screens):
         super(Color, self).link(buf, screens)

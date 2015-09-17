@@ -59,6 +59,7 @@ class Controller(threading.Thread):
 
         # Instruct the screens to setup their linking if any
         base_screen = screens['base']
+        base_screen.subscribe(self._driver.send_buffer)
         base_screen.link(self._driver.get_buffer(), screens)
 
         # Store the base screen
@@ -78,8 +79,6 @@ class Controller(threading.Thread):
     def run(self):
         self._running = True
         while self._running:
-            self._base_screen.draw()
-            self._driver.send_buffer()
             time.sleep(0.1)
 
     def quit(self):

@@ -7,6 +7,7 @@ import threading
 class RepeatTimer(threading.Thread):
     def __init__(self, interval, callable, *args, **kwargs):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.interval = interval
         self.callable = callable
         self.args = args
@@ -17,7 +18,7 @@ class RepeatTimer(threading.Thread):
     def run(self):
         while self.event.is_set():
             t = threading.Timer(self.interval, self.callable,
-                                self.args, self.kwargs)
+                                *self.args, **self.kwargs)
             t.start()
             t.join()
 
