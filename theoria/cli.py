@@ -38,14 +38,14 @@ def main():
     parser = argparse.ArgumentParser(description='Start the metric monitor.')
 
     parser.add_argument("-c", "--config", type=str,
-            default="conf/test.cfg",
+            default="conf/local.cfg",
             help="The configuration file to use")
 
     args = parser.parse_args()
 
     # Start up the controller
     config = TheoriaConfig()
-    config.read(['conf/new.cfg', args.config])
+    config.read(['conf/default.cfg', args.config])
     ctrlr = controller.Controller(config)
     ctrlr.start()
 
