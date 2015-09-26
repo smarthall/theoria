@@ -14,6 +14,8 @@ class UsagePlot(BaseScreen):
     def __init__(self, *args, **kwargs):
         super(UsagePlot, self).__init__(*args, **kwargs)
 
+        self.draw(self._provider.provide())
+
     def draw(self, data):
         one_gb = 1024 * 1024 * 1024
 
@@ -64,9 +66,11 @@ class UsagePlot(BaseScreen):
         plt.title('Download Usage')
 
         # X Labels
-        days    = mdates.DayLocator()
-        daysFmt = mdates.DateFormatter('%-d %b')
-        ax.xaxis.set_major_locator(days)
+        somedays = mdates.DayLocator(interval=int(1024/width))
+        days     = mdates.DayLocator()
+        daysFmt  = mdates.DateFormatter('%-d %b')
+        ax.xaxis.set_major_locator(somedays)
+        ax.xaxis.set_minor_locator(days)
         ax.xaxis.set_major_formatter(daysFmt)
 
         # Y Labels

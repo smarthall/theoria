@@ -4,10 +4,16 @@ from PIL import ImageColor, ImageDraw
 DEFAULT_COLOR_SCREEN = '#000000'
 
 class BaseScreen(object):
-    def __init__(self, providers, provider=None):
+    def __init__(self, providers, buf, screens, provider=None):
         self._provider = providers.get(provider, None)
 
         self._subscribers = []
+
+        self._buf = buf
+        if self._provider is not None:
+            self._provider.subscribe(
+                    callback=self.draw
+            )
 
     def subscribe(self, callback, *args, **kwargs):
         self._subscribers.append((callback, args, kwargs))
@@ -15,13 +21,6 @@ class BaseScreen(object):
     def changed(self):
         for callback, args, kwargs in self._subscribers:
             callback(*args, **kwargs)
-
-    def link(self, buf, screens):
-        self._buf = buf
-        if self._provider is not None:
-            self._provider.subscribe(
-                    callback=self.draw
-            )
 
     def draw(self):
         raise NotImplemented()
@@ -32,8 +31,6 @@ class Color(BaseScreen):
         super(Color, self).__init__(*args, **kwargs)
         self._color = color
 
-    def link(self, buf, screens):
-        super(Color, self).link(buf, screens)
         self.draw()
 
     def draw(self):

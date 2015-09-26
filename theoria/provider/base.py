@@ -9,7 +9,6 @@ class BaseProvider(object):
 
     def subscribe(self, callback, *args, **kwargs):
         self._subscribers.append((callback, args, kwargs))
-        callback(data=self.provide(), *args, **kwargs)
 
     def run(self):
         data = self.provide()

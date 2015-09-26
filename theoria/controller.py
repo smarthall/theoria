@@ -42,10 +42,22 @@ class Controller(threading.Thread):
         for provider_name in config.list_sections('provider'):
             providers[provider_name] = self.setup_provider(config.get_section('provider', provider_name))
 
-        # Screen
+        # Make constructors for screens
         screens = {}
         for screen_name in config.list_sections('screen'):
-            screens[screen_name] = self.setup_screen(config.get_section('screen', screen_name), providers)
+            screen_conf = config.get_section('screen', screen_name)
+
+            def make_screen(buf, screens, screen_conf=screen_conf, providers=providers):
+                conf = screen_conf.copy()
+                screen_class = import_class(conf['screen'])
+                del conf['screen']
+                return screen_class(
+                        buf=buf,
+                        screens=screens,
+                        providers=providers,
+                        **conf
+                )
+            screens[screen_name] = make_screen
 
         # Check for a base screen
         if 'base' not in screens.keys():
@@ -58,9 +70,8 @@ class Controller(threading.Thread):
         self._driver = driver_class(**driver_conf)
 
         # Instruct the screens to setup their linking if any
-        base_screen = screens['base']
+        base_screen = screens['base'](buf=self._driver.get_buffer(), screens=screens)
         base_screen.subscribe(self._driver.send_buffer)
-        base_screen.link(self._driver.get_buffer(), screens)
 
         # Store the base screen
         self._base_screen = base_screen
@@ -70,11 +81,6 @@ class Controller(threading.Thread):
         del provider_conf['provider']
         provider_conf['cache'] = self._cache
         return provider_class(**provider_conf)
-
-    def setup_screen(self, screen_conf, providers):
-        screen_class = import_class(screen_conf['screen'])
-        del screen_conf['screen']
-        return screen_class(providers=providers, **screen_conf)
 
     def run(self):
         self._running = True

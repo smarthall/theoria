@@ -21,6 +21,8 @@ class Time(BaseScreen):
 
         self._font = ImageFont.truetype(DEFAULT_FONT, time_size)
 
+        self.draw(self._provider.provide())
+
     def draw(self, data):
         draw = graphics.TheoriaDraw(self._buf)
 
@@ -34,6 +36,35 @@ class Time(BaseScreen):
 
         draw.rectangle((bg1, bg2), fill=self._bgcolor)
         draw.ctext((textx, timey), time_str, font=self._font, fill=self._fgcolor, center=graphics.CENTER_BOTH)
+
+        self.changed()
+
+class TinyTime(BaseScreen):
+    def __init__(self, fgcolor=DEFAULT_FGCOLOR, bgcolor=DEFAULT_BGCOLOR, *args, **kwargs):
+        super(TinyTime, self).__init__(*args, **kwargs)
+
+        self._fgcolor = ImageColor.getrgb(fgcolor)
+        self._bgcolor = ImageColor.getrgb(bgcolor)
+
+        width, height = self._buf.size
+        self._font = ImageFont.truetype(DEFAULT_FONT, height / 2)
+
+        self.draw(self._provider.provide())
+
+    def draw(self, data):
+        draw = graphics.TheoriaDraw(self._buf)
+
+        hours   = data['time'].strftime('%-I')
+        minutes = data['time'].strftime('%-M')
+
+        bg1 = (0, 0)
+        bg2 = (self._buf.width, self._buf.height)
+
+        textx = self._buf.width / 2
+
+        draw.rectangle((bg1, bg2), fill=self._bgcolor)
+        draw.ctext((textx, 0), hours, font=self._font, fill=self._fgcolor, center=graphics.CENTER_HORIZ)
+        draw.ctext((textx, self._buf.height/2), minutes, font=self._font, fill=self._fgcolor, center=graphics.CENTER_HORIZ)
 
         self.changed()
 
@@ -56,6 +87,8 @@ class TimeAndDate(BaseScreen):
 
         self._timefont = ImageFont.truetype(DEFAULT_FONT, time_size)
         self._datefont = ImageFont.truetype(DEFAULT_FONT, date_size)
+
+        self.draw(self._provider.provide())
 
     def draw(self, data):
         draw = graphics.TheoriaDraw(self._buf)
