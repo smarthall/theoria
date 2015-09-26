@@ -43,7 +43,7 @@ class UsagePlot(BaseScreen):
         fig, ax = plt.subplots()
 
         # Set size
-        dpi = 70
+        dpi = 70.0
         fig.set_size_inches(width/dpi, height/dpi)
         fig.set_dpi(dpi)
 
@@ -81,8 +81,9 @@ class UsagePlot(BaseScreen):
         fig.autofmt_xdate()
         canvas = plt.get_current_fig_manager().canvas
         canvas.draw()
-        plot_img = Image.fromstring('RGB', canvas.get_width_height(), canvas.tostring_rgb())
 
+        # Add Graph
+        plot_img = Image.fromstring('RGB', canvas.get_width_height(), canvas.tostring_rgb())
         draw.cpaste(plot_img, (width/2, height/2), center=graphics.CENTER_BOTH)
 
         self.changed()

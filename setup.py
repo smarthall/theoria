@@ -15,6 +15,7 @@ setup(
         'ws4py',
         'requests',
         'pytz',
+        'funcsigs',
         'numpy',
         'setuptools>=17.1',
         'matplotlib',
