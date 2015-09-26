@@ -85,6 +85,9 @@ class WeatherData(object):
     def title(self):
         return self._title
 
+    def day(self, day):
+        return self._data[day]
+
     @property
     def today(self):
         return self._data[0]
