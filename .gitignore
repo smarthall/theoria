@@ -1,2 +1,3 @@
 theoria.egg-info
 *.pyc
+conf/local.cfg
