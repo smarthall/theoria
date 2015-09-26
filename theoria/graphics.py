@@ -23,13 +23,16 @@ class TheoriaDraw(ImageDraw.ImageDraw):
 
   def cpaste(self, image, pos, **kwargs):
     (x, y) = pos
-    mask = kwargs.get('mask', image)
+    mask = kwargs.get('mask', image).convert('RGBA')
     (ch, cv) = kwargs.pop('center')
 
     if ch:
       x -= image.size[0] / 2
     if cv:
       y -= image.size[1] / 2
+
+    x = int(x)
+    y = int(y)
 
     self._im.paste(image, (x, y), mask)
 
