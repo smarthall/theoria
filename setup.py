@@ -16,6 +16,7 @@ setup(
         'requests',
         'pytz',
         'numpy',
+        'setuptools>=17.1',
         'matplotlib',
         'pyusb==1.0.0b2',
     ],
