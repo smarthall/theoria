@@ -47,6 +47,7 @@ class Controller(threading.Thread):
         for screen_name in config.list_sections('screen'):
             screen_conf = config.get_section('screen', screen_name)
 
+            # Use default arguments to 'lock' vars in scope
             def make_screen(buf, screens, screen_conf=screen_conf, providers=providers):
                 conf = screen_conf.copy()
                 screen_class = import_class(conf['screen'])

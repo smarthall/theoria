@@ -70,7 +70,7 @@ class GridScreen(ContainerScreen):
         super(GridScreen, self).__init__(buf=buf, *args, **kwargs)
 
         if len(self._children) != (self._rows * self._cols):
-            raise ConfigException('Expected %s screens, but only got %s.' % ((rows * cols), len(self._children)))
+            raise ConfigException('Expected %s screens, but got %s.' % ((self._rows * self._cols), len(self._children)))
 
         self.draw()
 
