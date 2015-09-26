@@ -47,7 +47,7 @@ class TinyTime(BaseScreen):
         self._bgcolor = ImageColor.getrgb(bgcolor)
 
         width, height = self._buf.size
-        self._font = ImageFont.truetype(DEFAULT_FONT, height / 2)
+        self._font = ImageFont.truetype(DEFAULT_FONT, int(height / 2.5))
 
         self.draw(self._provider.provide())
 
@@ -106,6 +106,72 @@ class TimeAndDate(BaseScreen):
         draw.rectangle((bg1, bg2), fill=self._bgcolor)
         draw.ctext((textx, timey), time_str, font=self._timefont, fill=self._fgcolor, center=graphics.CENTER_BOTH)
         draw.ctext((textx, datey), date_str, font=self._datefont, fill=self._fgcolor, center=graphics.CENTER_BOTH)
+
+        self.changed()
+
+class TinyYear(BaseScreen):
+    def __init__(self, fgcolor=DEFAULT_FGCOLOR, bgcolor=DEFAULT_BGCOLOR, *args, **kwargs):
+        super(TinyYear, self).__init__(*args, **kwargs)
+
+        self._fgcolor = ImageColor.getrgb(fgcolor)
+        self._bgcolor = ImageColor.getrgb(bgcolor)
+
+        width, height = self._buf.size
+        self._font = ImageFont.truetype(DEFAULT_FONT, width / 3)
+
+        self.draw(self._provider.provide())
+
+    def draw(self, data):
+        draw = graphics.TheoriaDraw(self._buf)
+
+        year = data['time'].strftime('%Y')
+
+        bg1 = (0, 0)
+        bg2 = (self._buf.width, self._buf.height)
+
+        textx = self._buf.width / 2
+        texty = self._buf.height / 2
+
+        draw.rectangle((bg1, bg2), fill=self._bgcolor)
+        draw.ctext((textx, texty), year, font=self._font, fill=self._fgcolor, center=graphics.CENTER_BOTH)
+
+        self.changed()
+
+class TinyDate(BaseScreen):
+    def __init__(self, fgcolor=DEFAULT_FGCOLOR, bgcolor=DEFAULT_BGCOLOR, *args, **kwargs):
+        super(TinyDate, self).__init__(*args, **kwargs)
+
+        self._fgcolor = ImageColor.getrgb(fgcolor)
+        self._bgcolor = ImageColor.getrgb(bgcolor)
+
+        width, height = self._buf.size
+        self._numfont = ImageFont.truetype(DEFAULT_FONT, height / 2)
+        self._wordfont = ImageFont.truetype(DEFAULT_FONT, height / 8)
+
+        self.draw(self._provider.provide())
+
+    def draw(self, data):
+        draw = graphics.TheoriaDraw(self._buf)
+
+        # Text
+        dayname = data['time'].strftime('%A')
+        day = data['time'].strftime('%-d')
+        monthname = data['time'].strftime('%B')
+
+        # Calculations
+        bg1 = (0, 0)
+        bg2 = (self._buf.width, self._buf.height)
+
+        textx = self._buf.width / 2
+        daynamey = self._buf.height / 8
+        dayy = self._buf.height / 2
+        monthnamey = self._buf.height - (self._buf.height / 4)
+
+        # Drawing
+        draw.rectangle((bg1, bg2), fill=self._bgcolor)
+        draw.ctext((textx, daynamey), dayname, font=self._wordfont, fill=self._fgcolor, center=graphics.CENTER_HORIZ)
+        draw.ctext((textx, dayy), day, font=self._numfont, fill=self._fgcolor, center=graphics.CENTER_BOTH)
+        draw.ctext((textx, monthnamey), monthname, font=self._wordfont, fill=self._fgcolor, center=graphics.CENTER_HORIZ)
 
         self.changed()
 
