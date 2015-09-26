@@ -15,6 +15,8 @@ setup(
         'ws4py',
         'requests',
         'pytz',
+        'numpy',
+        'matplotlib',
         'pyusb==1.0.0b2',
     ],
 
