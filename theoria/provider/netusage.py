@@ -86,6 +86,8 @@ class iiNet(PollingProvider):
 
         self._cache_store(cache_key, result, iiNet.REFRESH_INTERVAL)
 
+        return result
+
     def provide(self):
         return self._fetch_usage_data()
 
