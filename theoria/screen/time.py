@@ -55,7 +55,7 @@ class TinyTime(BaseScreen):
         draw = graphics.TheoriaDraw(self._buf)
 
         hours   = data['time'].strftime('%-I')
-        minutes = data['time'].strftime('%-M')
+        minutes = data['time'].strftime('%M')
 
         bg1 = (0, 0)
         bg2 = (self._buf.width, self._buf.height)
